@@ -1,0 +1,5 @@
+const KEY='odontogest-cache-v1';
+const FILES=['./','./index.html','./styles.css','./app.js','./db.js','./finance.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon.svg'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(KEY).then(c=>c.addAll(FILES.map(f=>new URL(f,self.registration.scope)))).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(Promise.all([caches.keys().then(names=>Promise.all(names.filter(n=>n.startsWith('odontogest-cache-')&&n!==KEY).map(n=>caches.delete(n)))),self.clients.claim()])));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url),base=new URL(self.registration.scope);if(u.origin!==base.origin||!u.pathname.startsWith(base.pathname))return;e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(hit=>hit||fetch(e.request).then(res=>{if(res.ok){const copy=res.clone();caches.open(KEY).then(c=>c.put(e.request,copy));}return res;}).catch(()=>caches.match(new URL('./index.html',self.registration.scope)))));});

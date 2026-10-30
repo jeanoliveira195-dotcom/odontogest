@@ -1,4 +1,4 @@
-name: Validar e publicar OdontoGest
+name: Validar, empacotar e publicar OdontoGest
 on:
   push:
     branches: [main]
@@ -41,14 +41,15 @@ jobs:
           rsvg-convert -w 512 -h 512 icons/icon.svg -o dist/icons/icon-512.png
           test -s dist/icons/icon-192.png
           test -s dist/icons/icon-512.png
-      - name: Configurar GitHub Pages
-        uses: actions/configure-pages@v5
+      - name: Disponibilizar pacote PWA para download
+        uses: actions/upload-artifact@v4
         with:
-          enablement: true
-      - name: Enviar artefato do site
+          name: OdontoGest-PWA
+          path: dist/
+      - name: Preparar artefato de implantação
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist/
 
   deploy:
     name: Publicar no GitHub Pages
@@ -57,6 +58,8 @@ jobs:
     environment:
       name: github-pages
     steps:
+      - name: Validar habilitação do GitHub Pages
+        uses: actions/configure-pages@v5
       - name: Implantar PWA
         id: deployment
         uses: actions/deploy-pages@v4

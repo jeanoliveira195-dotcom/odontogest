@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102e39"><meta name="description" content="Controle financeiro odontológico offline.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+<link rel="stylesheet" href="./styles.css"><title>OdontoGest · Finanças</title>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="identity"><div class="logo">✧</div><div><b>OdontoGest</b><small>Gestão inteligente</small></div></div>
+  <div class="side-label">FINANCEIRO</div>
+  <nav id="nav-desktop" class="menu" aria-label="Menu principal"></nav>
+  <div class="side-foot">LOCAL E PRIVADO <span>•</span> SEM NUVEM</div>
+</aside>
+<div class="main-shell">
+  <header class="topbar"><div><small>ÁREA DE TRABALHO</small><strong id="screen-title">Visão geral</strong></div><div class="top-actions"><span class="offline-mark"><i></i> Offline habilitado</span><button class="button button-primary" id="quick-new" type="button">+ Novo registro</button></div></header>
+  <main id="screen" tabindex="-1"></main>
+</div>
+<nav id="nav-mobile" class="mobile-nav" aria-label="Navegação"></nav>
+</div>
+<div id="notices" role="status" aria-live="polite"></div>
+<input id="import-file" type="file" accept="application/json,.json" hidden>
+<script type="module" src="./app.js"></script>
+</body></html>

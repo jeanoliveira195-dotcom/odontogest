@@ -1,0 +1,60 @@
+name: Validar e publicar OdontoGest
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+      - name: Instalar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Conferir JavaScript
+        run: npm run check
+      - name: Rodar testes financeiros
+        run: npm test
+      - name: Preparar versão PWA
+        run: |
+          mkdir -p dist/icons
+          cp index.html styles.css app.js db.js finance.js sw.js manifest.webmanifest dist/
+          cp icons/icon.svg dist/icons/
+          touch dist/.nojekyll
+      - name: Gerar ícones Android e Chromebook
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
+          rsvg-convert -w 192 -h 192 icons/icon.svg -o dist/icons/icon-192.png
+          rsvg-convert -w 512 -h 512 icons/icon.svg -o dist/icons/icon-512.png
+          test -s dist/icons/icon-192.png
+          test -s dist/icons/icon-512.png
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Enviar artefato do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Publicar no GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Implantar PWA
+        id: deployment
+        uses: actions/deploy-pages@v4
